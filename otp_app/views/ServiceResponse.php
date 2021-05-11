@@ -1,6 +1,6 @@
 <?php
 
-require 'HttpStatus.php';
+require 'utilities/HttpStatus.php';
 
 
 class ServiceResponse {

@@ -1,7 +1,6 @@
 <?php 
 
 require 'conecction/conectiondb.php';
-require 'utilities/constants.php';
 require 'utilities/ExceptionService.php';
 require 'views/ServiceResponse.php';
 require 'services/login.php';
@@ -19,14 +18,20 @@ set_exception_handler(function ($exception) use ($serviceResponse) {
     }
 
     $cuerpo = array(
-        "status" => $serviceResponse->status,
         "message" => $exception-> getMessage()
         );
-    $serviceResponse->send($cuerpo);
+    $serviceResponse->sendData($exception->getCode(), $cuerpo);
 }); 
 
+// Constantes de estado
+
+const LOGIN_SERVICE = 'login';
+
+// Array para meter todos los servicios
+const SERVICES = array(LOGIN_SERVICE);
 
 // optine los parametros de la url
+ // 127.0.0.0/api/login
 $url_req = trim($_SERVER['REQUEST_URI']);
 
 // Extraer segmento de la url
@@ -37,7 +42,7 @@ else
     throw new ExceptionService(HttpStatus::NotFound, utf8_encode($url_req));
 
 // Obtener recurso
-// 127.0.0.0/api/login
+// 127.0.0.0
 $service = explode('/', $url_req)[2];
 
 // Comprobar si existe el recurso
@@ -53,8 +58,11 @@ else{
             case LOGIN_SERVICE:
             switch ($metodo) {
                  case 'post':
-                     $serviceResponse ->sendData(Login::getToken());
+                     $serviceResponse ->sendData(HttpStatus::OK, Login::getToken());
                  break;
+                 default:
+             throw new ExceptionService(HttpStatus::NotFound, utf8_encode($url_req));
+        break;
             }
             break;
             

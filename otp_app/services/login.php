@@ -1,6 +1,6 @@
 <?php
 
-require_once './utilities/constants.php';
+require_once './utilities/HttpStatus.php';
 require_once './utilities/ExceptionService.php';
 
 class Login
@@ -12,28 +12,35 @@ class Login
         try{
             $res = file_get_contents('php://input'); // optiene los datos del tipo, get, post, put, delete
             
+        
             $datosjson = json_decode($res); // Codificación para optener en formato json
     
             $email = $datosjson->{'email'}; // Recuperas los datos
             $pass_hash = $datosjson->{'pass_hash'};
             
+            //validacion si estan en blanco
+
             $pdo = ConexionBD::obtenerInstancia()->obtenerBD();
 
-            $sql = "SELECT user FROM UserRegister where email ='".$email."' and input_time >= '". $dateTime."'";
+            //$sql = "SELECT * FROM usuario where email ='".$email."' and input_time >= '". $dateTime."'";
+            // BUscar en base de datos
+            // Si existe generar JWT con 
+                // email
+                // fecha_validez - 24 horas cogertimespan + 24 horas
 
+
+            $sql = "SELECT * FROM usuario ";
             $return_arr = array();
 
             foreach ( $pdo->query($sql) as $row) {
-                $row_array['contact'] = $row['contact'];
-                $row_array['message'] = $row['message'];
-                $row_array['time'] = $row['time'];
-    			array_push($return_arr,$row_array);
+                $item['contact'] = $row['email'];
+                $item['hash'] = $row['passHash'];
+
+    			array_push($return_arr,$item);
             }
 
             return [
-                    "status" => HttpStatus::OK,
-                    "email" =>  $email,
-				    "messages" => $return_arr
+				    "jwt" => $return_arr
                     ];
             
         }catch(Exception $ex){

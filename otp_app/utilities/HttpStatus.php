@@ -1,10 +1,4 @@
 <?php
-// Constantes de estado
-
-const LOGIN_SERVICE = 'login';
-
-// Array para meter todos los servicios
-const SERVICES = array(LOGIN_SERVICE);
 
 
 class HttpStatus{
