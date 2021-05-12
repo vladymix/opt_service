@@ -37,9 +37,6 @@ class Login
             $sql = "SELECT * FROM usuario 
             WHERE email='$email'";
 
-            if (empty($sql)){
-                throw new ExceptionService(HttpStatus::UnprocessableEntity, 'Usuario no registrado');
-            }
            
             //$userArray = array();
 
@@ -47,10 +44,9 @@ class Login
                 $item['email'] = $row['email'];
                 $item['userID'] = $row['User_ID'];
                 $item['pwd'] = $row['passHash'];
-
-    		//	array_push($userArray,$item);
             }
-            if($item['pwd']!=$pass_hash){
+
+            if(empty($item)||$item['pwd']!=$pass_hash||$item['email']!=$email){
                 throw new ExceptionService(HttpStatus::UnprocessableEntity, 'Usuario o clave incorrectos');
             }
 
