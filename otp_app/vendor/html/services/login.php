@@ -4,6 +4,7 @@ use \Firebase\JWT\JWT;
 
 require_once './utilities/HttpStatus.php';
 require_once './utilities/ExceptionService.php';
+require_once './utilities/IPControl.php';
 
 class Login
 {
@@ -14,7 +15,6 @@ class Login
         try{
             $res = file_get_contents('php://input'); // optiene los datos del tipo, get, post, put, delete
             
-        
             $datosjson = json_decode($res); // Codificación para optener en formato json
     
             $email = $datosjson->{'email'}; // Recuperas los datos
@@ -25,28 +25,29 @@ class Login
                 throw new ExceptionService(HttpStatus::UnprocessableEntity, 'Petición de login con datos vacíos');
             }
 
+
+            // Analizamos si el cliente esta en la lista de bloqueos
+            IPControl::analyzeClient();
+
             $pdo = ConexionBD::obtenerInstancia()->obtenerBD();
 
-            //$sql = "SELECT * FROM usuario where email ='".$email."' and input_time >= '". $dateTime."'";
             // BUscar en base de datos
             // Si existe generar JWT con 
                 // email
                 // fecha_validez - 24 horas cogertimespan + 24 horas
 
-
             $sql = "SELECT * FROM usuario 
-            WHERE email='$email'";
+            WHERE email='$email' and passHash='$pass_hash'";
 
-           
             //$userArray = array();
-
+            $item = array();
             foreach ( $pdo->query($sql) as $row) {
                 $item['email'] = $row['email'];
                 $item['userID'] = $row['User_ID'];
-                $item['pwd'] = $row['passHash'];
             }
 
-            if(empty($item)||$item['pwd']!=$pass_hash||$item['email']!=$email){
+            if(empty($item)){
+                IPControl::logIpError();
                 throw new ExceptionService(HttpStatus::UnprocessableEntity, 'Usuario o clave incorrectos');
             }
 
@@ -65,8 +66,14 @@ class Login
 				    "jwt" => $jwt
                     ];
             
-        }catch(Exception $ex){
-            throw new ExceptionService(HttpStatus::MethodNotAllowed, 'No contiene registros'.$ex);
+        }catch(ExceptionService $serviceEx){
+            throw $serviceEx;
+       }
+        catch(Exception $ex){
+            //DEBUG 
+            throw new ExceptionService(HttpStatus::MethodNotAllowed, 'Se ha producido un error '.$ex);
+            // PRODUCTION
+           // throw new ExceptionService(HttpStatus::MethodNotAllowed, 'Se ha producido un error '.$ex-> getMessage());
         }
     }
 }

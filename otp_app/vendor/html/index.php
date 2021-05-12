@@ -2,8 +2,6 @@
 
 require_once '../autoload.php';
 
-
-
 require 'conecction/conectiondb.php';
 require 'utilities/ExceptionService.php';
 require 'views/ServiceResponse.php';
@@ -22,7 +20,7 @@ set_exception_handler(function ($exception) use ($serviceResponse) {
     }
 
     $cuerpo = array(
-        "message" => $exception-> getMessage()
+        "error" => $exception-> getMessage()
         );
     $serviceResponse->sendData($exception->getCode(), $cuerpo);
 }); 
