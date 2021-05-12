@@ -43,7 +43,14 @@ else
 
 // Obtener recurso
 // 127.0.0.0
-$service = explode('/', $url_req)[2];
+$argsUrl = explode('/', $url_req);
+
+
+if(count($argsUrl)<2 || empty($argsUrl[2])){
+	throw new ExceptionService(HttpStatus::NotFound, "Resource not found ".$url_req);
+}
+
+$service =  $argsUrl[2];
 
 // Comprobar si existe el recurso
 if (!in_array($service, SERVICES)) 
