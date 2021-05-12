@@ -16,16 +16,17 @@ class Login
             $res = file_get_contents('php://input'); // optiene los datos del tipo, get, post, put, delete
             
             $datosjson = json_decode($res); // Codificación para optener en formato json
+			
+			 //validacion si estan en blanco
+            if (empty($datosjson)||empty($datosjson->{'email'})||empty($datosjson->{'pass_hash'})){
+				 IPControl::logIpError();
+                throw new ExceptionService(HttpStatus::UnprocessableEntity, 'Petición de login con datos vacíos email y pass_hash son obligatorios');
+            }
+			
     
             $email = $datosjson->{'email'}; // Recuperas los datos
             $pass_hash = $datosjson->{'pass_hash'};
             
-            //validacion si estan en blanco
-            if (empty($datosjson)||empty($email)||empty($pass_hash)){
-                throw new ExceptionService(HttpStatus::UnprocessableEntity, 'Petición de login con datos vacíos');
-            }
-
-
             // Analizamos si el cliente esta en la lista de bloqueos
             IPControl::analyzeClient();
 
