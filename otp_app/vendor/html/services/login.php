@@ -1,10 +1,11 @@
 <?php
 
-use \Firebase\JWT\JWT;
+
 
 require_once './utilities/HttpStatus.php';
 require_once './utilities/ExceptionService.php';
 require_once './utilities/IPControl.php';
+require_once './utilities/JwtHelper.php';
 
 class Login
 {
@@ -54,14 +55,13 @@ class Login
 
             $caducity=time()+(24*60*60);    //Caducidad de 24h
 
-            $key = "MIICXAIBAAKBgQCrncGS3U1s8VFKKNSPV5sbk1/I4uU/BTuGik+hFtMILqnYjYms";
             $payload = array(
                 "email" =>  $item['email'],
                 "caducity" => $caducity,
                 "User_ID" => $item['userID'],
             );
 
-            $jwt = JWT::encode($payload, $key);
+            $jwt =  JwtHelper::encode($payload);
 
             return [
 				    "jwt" => $jwt
