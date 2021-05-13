@@ -1,7 +1,5 @@
 <?php
 
-
-
 require_once './utilities/HttpStatus.php';
 require_once './utilities/ExceptionService.php';
 require_once './utilities/IPControl.php';
@@ -50,7 +48,7 @@ class Login
 
             if(empty($item)){
                 IPControl::logIpError();
-                throw new ExceptionService(HttpStatus::UnprocessableEntity, 'Usuario o clave incorrectos');
+                throw new ExceptionService(HttpStatus::Unauthorized, 'Usuario o clave incorrectos');
             }
 
             $caducity=time()+(24*60*60);    //Caducidad de 24h
@@ -72,7 +70,7 @@ class Login
        }
         catch(Exception $ex){
             //DEBUG 
-            throw new ExceptionService(HttpStatus::MethodNotAllowed, 'Se ha producido un error '.$ex);
+            throw new ExceptionService(HttpStatus::InternalServerError, 'Se ha producido un error '.$ex);
             // PRODUCTION
            // throw new ExceptionService(HttpStatus::MethodNotAllowed, 'Se ha producido un error '.$ex-> getMessage());
         }
