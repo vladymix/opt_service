@@ -10,7 +10,11 @@ class CodeOtp
     public static function generate(){
         try{
 
-            return [
+            IPControl::analyzeClient();
+
+            IPControl::logIpError();
+
+             return [
                 "result" => "Pruebas generacion de codigo"
                 ];
         }

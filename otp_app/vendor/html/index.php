@@ -21,10 +21,17 @@ set_exception_handler(function ($exception) use ($serviceResponse) {
     } else {
         $serviceResponse->status = HttpStatus::MethodNotAllowed;
     }
+
     $cuerpo = array(
         "error" => $exception-> getMessage()
-        );
-    $serviceResponse->sendData($exception->getCode(), $cuerpo);
+    );
+
+    // DEBUG
+    $cuerpo = array(
+            "error_dev" => ''.$exception
+     );
+
+    $serviceResponse->sendData($serviceResponse->status, $cuerpo);
 });
 
 // Valida la ruta del api o genera una excepcion 
