@@ -4,8 +4,11 @@ require_once '../autoload.php';
 
 require 'conecction/conectiondb.php';
 require 'utilities/ExceptionService.php';
+require 'utilities/RouterHelper.php';
 require 'views/ServiceResponse.php';
+
 require 'services/login.php';
+require 'services/CodeOtp.php';
 
 // Create exceptions
 $serviceResponse = new ServiceResponse();
@@ -21,56 +24,39 @@ set_exception_handler(function ($exception) use ($serviceResponse) {
 
     $cuerpo = array(
         "error" => $exception-> getMessage()
-        );
-    $serviceResponse->sendData($exception->getCode(), $cuerpo);
-}); 
+    );
 
-// Constantes de estado
+    // DEBUG
+    $cuerpo = array(
+            "error_dev" => ''.$exception
+     );
 
-const LOGIN_SERVICE = 'login';
+    $serviceResponse->sendData($serviceResponse->status, $cuerpo);
+});
 
-// Array para meter todos los servicios
-const SERVICES = array(LOGIN_SERVICE);
+// Valida la ruta del api o genera una excepcion 
+$service = RouterHelper::getService();
 
-// optine los parametros de la url
- // 127.0.0.0/api/login
-$url_req = trim($_SERVER['REQUEST_URI']);
+$metodo = strtolower($_SERVER['REQUEST_METHOD']); // tipo, get, post, put, delete
 
-// Extraer segmento de la url
-if (isset($url_req)){
-    $peticion = explode('/', $url_req);
-}
-else
-    throw new ExceptionService(HttpStatus::NotFound, utf8_encode($url_req));
-
-// Obtener recurso
-// 127.0.0.0
-$service = explode('/', $url_req)[2];
-
-// Comprobar si existe el recurso
-if (!in_array($service, SERVICES)) 
-{
-	// Respuesta error
-	throw new ExceptionService(HttpStatus::NotFound, "Function not defined in array tipecall:".$service);
-}
-else{
-    $metodo = strtolower($_SERVER['REQUEST_METHOD']); // tipo, get, post, put, delete
-
-    switch($service){
-            case LOGIN_SERVICE:
-            switch ($metodo) {
-                 case 'post':
-                     $serviceResponse ->sendData(HttpStatus::OK, Login::getToken());
-                 break;
-                 default:
-             throw new ExceptionService(HttpStatus::NotFound, utf8_encode($url_req));
-        break;
-            }
+switch($service){
+    case LOGIN_SERVICE:
+        switch ($metodo) {
+            case 'post':
+                $serviceResponse ->sendData(HttpStatus::OK, Login::getToken());
             break;
-            
-        default:
-             throw new ExceptionService(HttpStatus::NotFound, utf8_encode($url_req));
-        break;
-    }
-}
+            default:
+                throw new ExceptionService(HttpStatus::NotFound, utf8_encode($metodo));
+        }
+    break;
 
+    case GENERATE_CODE_SERVICE:
+            switch ($metodo) {
+                case 'post':
+                    $serviceResponse ->sendData(HttpStatus::OK, CodeOtp::generate());
+                break;
+                default:
+                    throw new ExceptionService(HttpStatus::NotFound, utf8_encode($metodo));
+            }
+    break; 
+}

@@ -1,10 +1,9 @@
 <?php
 
-use \Firebase\JWT\JWT;
-
 require_once './utilities/HttpStatus.php';
 require_once './utilities/ExceptionService.php';
 require_once './utilities/IPControl.php';
+require_once './utilities/JwtHelper.php';
 
 class Login
 {
@@ -49,19 +48,18 @@ class Login
 
             if(empty($item)){
                 IPControl::logIpError();
-                throw new ExceptionService(HttpStatus::UnprocessableEntity, 'Usuario o clave incorrectos');
+                throw new ExceptionService(HttpStatus::Unauthorized, 'Usuario o clave incorrectos');
             }
 
             $caducity=time()+(24*60*60);    //Caducidad de 24h
 
-            $key = "MIICXAIBAAKBgQCrncGS3U1s8VFKKNSPV5sbk1/I4uU/BTuGik+hFtMILqnYjYms";
             $payload = array(
                 "email" =>  $item['email'],
                 "caducity" => $caducity,
                 "User_ID" => $item['userID'],
             );
 
-            $jwt = JWT::encode($payload, $key);
+            $jwt =  JwtHelper::encode($payload);
 
             return [
 				    "jwt" => $jwt
@@ -72,7 +70,7 @@ class Login
        }
         catch(Exception $ex){
             //DEBUG 
-            throw new ExceptionService(HttpStatus::MethodNotAllowed, 'Se ha producido un error '.$ex);
+            throw new ExceptionService(HttpStatus::InternalServerError, 'Se ha producido un error '.$ex);
             // PRODUCTION
            // throw new ExceptionService(HttpStatus::MethodNotAllowed, 'Se ha producido un error '.$ex-> getMessage());
         }
