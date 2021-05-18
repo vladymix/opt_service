@@ -61,7 +61,20 @@ CREATE TABLE `usuario` (
 INSERT INTO `usuario` (`User_ID`, `email`, `passHash`, `createAt`) VALUES
 (1, 'exampleuser@amazon.com', 'a7574a42198b7d7eee2c037703a0b95558f195457908d6975e681e2055fd5eb9', '2021-05-13 00:01:38');
 
---
+-----------------------------------------------------------------------------------------
+
+CREATE TABLE 'courrier'(
+  'company_ID' varchar(64) NOT NULL,
+  'passHash' varchar(64) NOT NULL,
+  'courrier_ID' int (11) NOT NULL,
+  'createAt'  datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+INSERT INTO `courrier` (`company_ID`, `passHash`, `createAt`) VALUES
+(1, 'exampleuser@amazon.com', 'a7574a42198b7d7eee2c037703a0b95558f195457908d6975e681e2055fd5eb9');
+
+
+
 -- Indexes for dumped tables
 --
 
@@ -76,6 +89,11 @@ ALTER TABLE `ipcontrol`
 --
 ALTER TABLE `usuario`
   ADD PRIMARY KEY (`User_ID`);
+
+--
+-- Index for courrier
+ALTER TABLE `courrier`
+  ADD PRIMARY KEY (`courrier_ID`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -94,6 +112,10 @@ ALTER TABLE `usuario`
   MODIFY `User_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 COMMIT;
 
+
+ALTER TABLE `courrier`
+  MODIFY `courrier_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

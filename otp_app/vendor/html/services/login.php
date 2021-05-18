@@ -51,7 +51,7 @@ class Login
                 throw new ExceptionService(HttpStatus::Unauthorized, 'Usuario o clave incorrectos');
             }
 
-            $caducity=time()+(24*60*60);    //Caducidad de 24h
+            $caducity=time()+(1*60*60);    //Caducidad de 1h
 
             $payload = array(
                 "email" =>  $item['email'],
