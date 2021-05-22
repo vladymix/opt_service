@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.0
+-- version 5.0.4
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: May 13, 2021 at 03:38 PM
--- Server version: 10.4.19-MariaDB
--- PHP Version: 8.0.6
+-- Servidor: 127.0.0.1
+-- Tiempo de generación: 18-05-2021 a las 20:57:10
+-- Versión del servidor: 10.4.17-MariaDB
+-- Versión de PHP: 8.0.1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,26 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `otp_service`
+-- Base de datos: `otp_service`
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `ipcontrol`
+-- Estructura de tabla para la tabla `delivery`
+--
+
+CREATE TABLE `delivery` (
+  `delivery_ID` int(11) NOT NULL,
+  `User_ID` int(11) NOT NULL,
+  `track_ID` varchar(16) NOT NULL,
+  `status` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `ipcontrol`
 --
 
 CREATE TABLE `ipcontrol` (
@@ -35,7 +48,7 @@ CREATE TABLE `ipcontrol` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data for table `ipcontrol`
+-- Volcado de datos para la tabla `ipcontrol`
 --
 
 INSERT INTO `ipcontrol` (`id`, `cliente_ip`, `retry_times`, `locked_up`) VALUES
@@ -44,7 +57,20 @@ INSERT INTO `ipcontrol` (`id`, `cliente_ip`, `retry_times`, `locked_up`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `usuario`
+-- Estructura de tabla para la tabla `otp_data`
+--
+
+CREATE TABLE `otp_data` (
+  `code_ID` int(11) NOT NULL,
+  `jwt_otp` varchar(1024) NOT NULL,
+  `otp` varchar(6) NOT NULL,
+  `status` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `usuario`
 --
 
 CREATE TABLE `usuario` (
@@ -55,43 +81,43 @@ CREATE TABLE `usuario` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data for table `usuario`
+-- Volcado de datos para la tabla `usuario`
 --
 
 INSERT INTO `usuario` (`User_ID`, `email`, `passHash`, `createAt`) VALUES
 (1, 'exampleuser@amazon.com', 'a7574a42198b7d7eee2c037703a0b95558f195457908d6975e681e2055fd5eb9', '2021-05-13 00:01:38');
 
 --
--- Indexes for dumped tables
+-- Índices para tablas volcadas
 --
 
 --
--- Indexes for table `ipcontrol`
+-- Indices de la tabla `delivery`
 --
-ALTER TABLE `ipcontrol`
-  ADD PRIMARY KEY (`id`);
+ALTER TABLE `delivery`
+  ADD PRIMARY KEY (`delivery_ID`);
 
 --
--- Indexes for table `usuario`
+-- Indices de la tabla `otp_data`
 --
-ALTER TABLE `usuario`
-  ADD PRIMARY KEY (`User_ID`);
+ALTER TABLE `otp_data`
+  ADD PRIMARY KEY (`code_ID`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- AUTO_INCREMENT de las tablas volcadas
 --
 
 --
--- AUTO_INCREMENT for table `ipcontrol`
+-- AUTO_INCREMENT de la tabla `delivery`
 --
-ALTER TABLE `ipcontrol`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+ALTER TABLE `delivery`
+  MODIFY `delivery_ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `usuario`
+-- AUTO_INCREMENT de la tabla `otp_data`
 --
-ALTER TABLE `usuario`
-  MODIFY `User_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+ALTER TABLE `otp_data`
+  MODIFY `code_ID` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
