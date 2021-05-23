@@ -9,6 +9,7 @@ class HttpStatus{
     const Unauthorized= 401; //Indica que el cliente debe estar autorizado primero antes de realizar operaciones con los recursos
     const NotFound =404;   // Ideal para especificar que el recurso buscado no existe
     const MethodNotAllowed = 405; // Nos permite expresar que el método relacionado a la url no es permitido en la api
+    const NotAcceptable=406;    //Para indicar que el server no puede generar una respuesta a un aconsulta SQL mal planteada
     const UnprocessableEntity=422;//    Va muy bien cuando los parámetros que se necesitaban en la petición no están completos o su sintaxis es la incorrecta para procesar la petición.
     const TooManyRequests = 429; //   Se usa para expresarle al usuario que ha excedido su número de peticiones si es que existe una política de límites.
     const InternalServerError = 500; //  Te permite expresar que existe un error interno del servidor.

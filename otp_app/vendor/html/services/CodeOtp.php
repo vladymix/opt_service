@@ -37,6 +37,7 @@ class CodeOtp
             }
             //Comprueba caducicdad
             if($tokenDecoded->{'caducity'}<time()){
+                IPControl::logIpError();
                 throw new ExceptionService(HttpStatus::NotFound, 'Token caducado.');
             }    
            
@@ -58,12 +59,15 @@ class CodeOtp
             $stmt->bindParam(':trackid', $track_id);
             $stmt->bindParam(':_status', $status=0);
             $resul = $stmt->execute();
-
+            //Obtención de clave primaria
+            $PK_id=$pdo->lastInsertId();
+            
     
             $otp_pass=CodeOtp::random_str(6); //Generamos código de 6 cifras en Base64. Prob colisión=1/64^6
             $status=1;
 
-            $payloadJwt_otp=array(
+            $payloadJwt_otp=array( //Introducir userID y trackerID como clave primaria33
+                "user_id" => $tokenDecoded->{'User_ID'},
                 "token" => $token,
                 "track_id" => $track_id,
                 "email_cliente" => $email_cliente,
@@ -73,12 +77,13 @@ class CodeOtp
             $jwt_otp=JwtHelper::encode($payloadJwt_otp);
             
             //Insertar datos de OTP en BBD, en tabla otp_data
-            $otpInsert="INSERT INTO otp_data (jwt_otp, otp, status)
-            VALUES (:jwt_otp, :otp_pass, :_status)";
+            $otpInsert="INSERT INTO otp_data (jwt_otp, otp, status, delivery_ID)
+            VALUES (:jwt_otp, :otp_pass, :_status, :PK_id)";
             $stmt=$pdo->prepare($otpInsert);
             $stmt->bindParam(':jwt_otp', $jwt_otp);
             $stmt->bindParam(':otp_pass', $otp_pass);
             $stmt->bindParam(':_status', $status=1);
+            $stmt->bindParam(':PK_id', $PK_id);
             $resul = $stmt->execute();
 
             $responseObject=array(
@@ -102,7 +107,7 @@ class CodeOtp
         }
         catch(SignatureInvalidException $signEx){
             IPControl::logIpError();
-            throw new ExceptionService(HttpStatus::Unauthorized, 'Se ha producido un error al verificar la firma '.$ex);
+            throw new ExceptionService(HttpStatus::Unauthorized, 'Se ha producido un error al verificar la firma '.$signEx);
 
         }
     }
