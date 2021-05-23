@@ -52,8 +52,13 @@ class CodeOtp
 
             //Insertar datos en BBD, tabla delivery
             $delInsert="INSERT INTO delivery (User_ID, track_ID, status)
-            VALUES ($tokenDecoded->{'User_ID'}), $track_id,$status=0)";
-            //Insertar!!!!!!!!!!!Buscar Codigo para lanzar este insert
+            VALUES (:userid, :trackid, :_status)";
+            $stmt=$pdo->prepare($delInsert);
+            $stmt->bindParam(':userid', $tokenDecoded->{'User_ID'});
+            $stmt->bindParam(':trackid', $track_id);
+            $stmt->bindParam(':_status', $status=0);
+            $resul = $stmt->execute();
+
     
             $otp_pass=CodeOtp::random_str(6); //Generamos código de 6 cifras en Base64. Prob colisión=1/64^6
             $status=1;
@@ -69,8 +74,12 @@ class CodeOtp
             
             //Insertar datos de OTP en BBD, en tabla otp_data
             $otpInsert="INSERT INTO otp_data (jwt_otp, otp, status)
-            VALUES ($jwt_otp, $otp_pass, $status=1)";
-            //INSERTAR!!!!!!!  Buscar como lanzar este insert
+            VALUES (:jwt_otp, :otp_pass, :_status)";
+            $stmt=$pdo->prepare($otpInsert);
+            $stmt->bindParam(':jwt_otp', $jwt_otp);
+            $stmt->bindParam(':otp_pass', $otp_pass);
+            $stmt->bindParam(':_status', $status=1);
+            $resul = $stmt->execute();
 
             $responseObject=array(
                 "jwt_otp"=>$jwt_otp, 
@@ -89,7 +98,7 @@ class CodeOtp
             //DEBUG 
             throw new ExceptionService(HttpStatus::InternalServerError, 'Se ha producido un error '.$ex);
             // PRODUCTION
-           // throw new ExceptionService(HttpStatus::MethodNotAllowed, 'Se ha producido un error '.$ex-> getMessage());
+            // throw new ExceptionService(HttpStatus::MethodNotAllowed, 'Se ha producido un error '.$ex-> getMessage());
         }
         catch(SignatureInvalidException $signEx){
             IPControl::logIpError();
