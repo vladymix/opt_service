@@ -18,6 +18,4 @@ class JwtHelper {
     public static function decode($jwt){
         return JWT::decode($jwt, JwtHelper::KEY, array('HS256'));
     }
-
-
 }
