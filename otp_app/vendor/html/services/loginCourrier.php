@@ -17,13 +17,13 @@ class Login
             $datosjson = json_decode($res); // Codificación para optener en formato json
 			
 			 //validacion si estan en blanco
-            if (empty($datosjson)||empty($datosjson->{'email'})||empty($datosjson->{'pass_hash'})){
+            if (empty($datosjson)||empty($datosjson->{'company_ID'})||empty($datosjson->{'pass_hash'})){
 				 IPControl::logIpError();
-                throw new ExceptionService(HttpStatus::UnprocessableEntity, 'Petición de login con datos vacíos email y pass_hash son obligatorios');
+                throw new ExceptionService(HttpStatus::UnprocessableEntity, 'Petición de login con datos vacíos. company_ID y pass_hash son obligatorios');
             }
 			
     
-            $email = $datosjson->{'email'}; // Recuperas los datos
+            $company_ID = $datosjson->{'company_ID'}; // Recuperas los datos
             $pass_hash = $datosjson->{'pass_hash'};
             
             // Analizamos si el cliente esta en la lista de bloqueos
@@ -33,17 +33,17 @@ class Login
 
             // BUscar en base de datos
             // Si existe generar JWT con 
-                // email
+                // company_ID
                 // fecha_validez - 24 horas cogertimespan + 24 horas
 
             $sql = "SELECT * FROM usuario 
-            WHERE email='$email' and passHash='$pass_hash'";
+            WHERE company_ID='$company_ID' and passHash='$pass_hash'";
 
             //$userArray = array();
             $item = array();
             foreach ( $pdo->query($sql) as $row) {
-                $item['email'] = $row['email'];
-                $item['userID'] = $row['User_ID'];
+                $item['company_ID'] = $row['company_ID'];
+                $item['courrier_ID'] = $row['courrier_ID'];
             }
 
             if(empty($item)){
@@ -51,12 +51,12 @@ class Login
                 throw new ExceptionService(HttpStatus::Unauthorized, 'Usuario o clave incorrectos');
             }
 
-            $caducity=time()+(1*60*60);    //Caducidad de 1h
+            $caducity=time()+(24*60*60);    //Caducidad de 24h
 
             $payload = array(
-                "email" =>  $item['email'],
+                "company_ID" =>  $item['company_ID'],
                 "caducity" => $caducity,
-                "User_ID" => $item['userID'],
+                "courrier_ID" => $item['courrier_ID'],
             );
 
             $jwt =  JwtHelper::encode($payload);
