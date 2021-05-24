@@ -79,6 +79,16 @@ class validatecode{
                 updateStatus();
             }
             else throw new ExceptionService(HttpStatus::NotAcceptable, 'Código incorrecto');
+            
+            
+            $responseObject=array(
+                "track_id"=>$track_id, 
+                "status"=>$status);
+            
+            return[
+                $responseObject
+            ];
+
         }
 
         catch(SignatureInvalidException $signEx){
