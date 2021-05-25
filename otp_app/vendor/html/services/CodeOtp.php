@@ -41,12 +41,7 @@ class CodeOtp
                 throw new ExceptionService(HttpStatus::NotFound, 'Token caducado.');
             }    
            
-            //Comprobar identidad del usuario
-            if($email_cliente != $tokenDecoded->{'email'}){
-                IPControl::logIpError();
-                throw new ExceptionService(HttpStatus::Unauthorized, 'Se ha producido un error al verificar la identidad ');
-            }
-
+           
             IPControl::analyzeClient();
 
             $pdo = ConexionBD::obtenerInstancia()->obtenerBD(); //Conexión a la BBDD tras comprobar cliente
@@ -54,10 +49,12 @@ class CodeOtp
             //Insertar datos en BBD, tabla delivery
             $delInsert="INSERT INTO delivery (User_ID, track_ID, status)
             VALUES (:userid, :trackid, :_status)";
+
+            $status=0;
             $stmt=$pdo->prepare($delInsert);
             $stmt->bindParam(':userid', $tokenDecoded->{'User_ID'});
             $stmt->bindParam(':trackid', $track_id);
-            $stmt->bindParam(':_status', $status=0);
+            $stmt->bindParam(':_status', $status);
             $resul = $stmt->execute();
             //Obtención de clave primaria
             $PK_id=$pdo->lastInsertId();
@@ -79,10 +76,13 @@ class CodeOtp
             //Insertar datos de OTP en BBD, en tabla otp_data
             $otpInsert="INSERT INTO otp_data (jwt_otp, otp, status, delivery_ID)
             VALUES (:jwt_otp, :otp_pass, :_status, :PK_id)";
+
+            $status=1;
+
             $stmt=$pdo->prepare($otpInsert);
             $stmt->bindParam(':jwt_otp', $jwt_otp);
             $stmt->bindParam(':otp_pass', $otp_pass);
-            $stmt->bindParam(':_status', $status=1);
+            $stmt->bindParam(':_status', $status);
             $stmt->bindParam(':PK_id', $PK_id);
             $resul = $stmt->execute();
 
@@ -91,9 +91,7 @@ class CodeOtp
                 "track_id"=>$track_id, 
                 "estado"=>$status);
             
-            return[
-                $responseObject
-            ];
+            return  $responseObject;
             
         }
         catch(ExceptionService $serviceEx){
@@ -114,7 +112,7 @@ class CodeOtp
 
     public static function random_str(
         int $length = 64,
-        string $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/'
+        string $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
     ): string {
         if ($length < 1) {
             throw new \RangeException("Length must be a positive integer");

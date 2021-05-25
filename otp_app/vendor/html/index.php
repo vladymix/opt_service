@@ -9,6 +9,9 @@ require 'views/ServiceResponse.php';
 
 require 'services/login.php';
 require 'services/CodeOtp.php';
+require 'services/validatecode.php';
+require 'services/PushRegister.php';
+require 'services/Status.php';
 
 // Create exceptions
 $serviceResponse = new ServiceResponse();
@@ -58,5 +61,37 @@ switch($service){
                 default:
                     throw new ExceptionService(HttpStatus::NotFound, utf8_encode($metodo));
             }
+    break;
+    
+    case VALIDATE_CODE_SERVICE:
+        switch ($metodo) {
+            case 'post':
+                $serviceResponse ->sendData(HttpStatus::OK, validatecode::validate());
+            break;
+            default:
+                throw new ExceptionService(HttpStatus::NotFound, utf8_encode($metodo));
+        }
     break; 
+    case STATUS_SERVICE:
+        switch ($metodo) {
+            case 'post':
+                // TODO
+                $serviceResponse ->sendData(HttpStatus::OK, Status::verify());
+            break;
+            default:
+                throw new ExceptionService(HttpStatus::NotFound, utf8_encode($metodo));
+        }
+    break; 
+    case PUSH_REGISTER_SERVICE:
+        switch ($metodo) {
+            case 'post':
+                $serviceResponse ->sendData(HttpStatus::OK, PushRegister::register());
+            break;
+            default:
+                throw new ExceptionService(HttpStatus::NotFound, utf8_encode($metodo));
+        }
+    break;
+
+    
+
 }

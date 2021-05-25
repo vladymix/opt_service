@@ -5,9 +5,12 @@ require_once 'ExceptionService.php';
  // Constantes de estado
  const LOGIN_SERVICE = 'login';
  const GENERATE_CODE_SERVICE = 'generatecode';
+ const VALIDATE_CODE_SERVICE = 'validatecode';
+ const STATUS_SERVICE = 'status';
+ const PUSH_REGISTER_SERVICE = 'pushregister';
 
  // Array para meter todos los servicios
- const SERVICES = array(LOGIN_SERVICE, GENERATE_CODE_SERVICE);
+ const SERVICES = array(LOGIN_SERVICE, GENERATE_CODE_SERVICE, VALIDATE_CODE_SERVICE, STATUS_SERVICE, PUSH_REGISTER_SERVICE);
 
 class RouterHelper{
 
