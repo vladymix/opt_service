@@ -1,37 +1,23 @@
 package com.ssr.otp
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.messaging.FirebaseMessaging
+import com.ssr.otp.ui.CustomerOrders
+import com.ssr.otp.ui.DeliveriesActivity
 
-class MainActivity : AppCompatActivity() {
-
-    val TAG = "TAG"
+class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        findViewById<View>(R.id.mButton).setOnClickListener {
-            refreshToken()
+        findViewById<View>(R.id.btnDelivery).setOnClickListener {
+            startActivity(Intent(this, DeliveriesActivity::class.java))
         }
-    }
 
-    fun refreshToken() {
-
-        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
-                return@OnCompleteListener
-            }
-            // Get new FCM registration token
-            val token = task.result
-
-            Toast.makeText(baseContext, token, Toast.LENGTH_SHORT).show()
-        })
+        findViewById<View>(R.id.btnCustomer).setOnClickListener {
+            startActivity(Intent(this, CustomerOrders::class.java))
+        }
     }
 }

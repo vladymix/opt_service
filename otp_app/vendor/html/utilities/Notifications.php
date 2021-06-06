@@ -9,12 +9,25 @@ class Notifications
         
         // Send Email
 
+       
         // Send sms
 
         // Send Notification
-        // Recuperar push token desde base de datos con el email
-        Notifications::sendGCM("Codigo de confirmación ".$code." para la recepción del paquete","eRwmILD7SVGTvO5LmjcbYq:APA91bHNBUpG_zVusxBCkhr1xjNV0Z_NpsYNsD2t6T0gdXrwTV1VLD1uJEQ13Q7ib2WGUebR8Vn5CvtBCEdrWejCpDPF3fGL8-pXoo4X82QvhfOk0ZrNdiV3FSZbPbfJJCGEIm14xgkS");
+        $pdo = ConexionBD::obtenerInstancia()->obtenerBD();
+        $sql = "SELECT * FROM userpush WHERE email='$email' ";
 
+        $data = array();
+
+        foreach ( $pdo->query($sql) as $row) {
+            $data['id'] = $row['id'];
+            $data['email'] = $row['email'];
+            $data['token_push'] = $row['token_push'];
+        }
+
+        if(!empty($data)){
+            // Recuperar push token desde base de datos con el email
+            Notifications::sendGCM("Confirmation code  ".$code." for receiving the package",$data['token_push']);
+        }
     }
 
 
@@ -46,7 +59,7 @@ class Notifications
         curl_setopt ( $ch, CURLOPT_POSTFIELDS, $fields );
     
         $result = curl_exec ( $ch );
-        echo $result;
+       //TO TEST echo $result;
         curl_close ( $ch );
     }
 
