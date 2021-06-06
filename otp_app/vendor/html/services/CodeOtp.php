@@ -6,6 +6,8 @@ require_once './utilities/HttpStatus.php';
 require_once './utilities/ExceptionService.php';
 require_once './utilities/IPControl.php';
 require_once './utilities/JwtHelper.php';
+require_once './utilities/Notifications.php';
+
 
 class CodeOtp
 {
@@ -46,11 +48,12 @@ class CodeOtp
 
             $pdo = ConexionBD::obtenerInstancia()->obtenerBD(); //Conexión a la BBDD tras comprobar cliente
 
+            $status=1;
             //Insertar datos en BBD, tabla delivery
             $delInsert="INSERT INTO delivery (User_ID, track_ID, status)
             VALUES (:userid, :trackid, :_status)";
 
-            $status=0;
+            
             $stmt=$pdo->prepare($delInsert);
             $stmt->bindParam(':userid', $tokenDecoded->{'User_ID'});
             $stmt->bindParam(':trackid', $track_id);
@@ -61,8 +64,7 @@ class CodeOtp
             
     
             $otp_pass=CodeOtp::random_str(6); //Generamos código de 6 cifras en Base64. Prob colisión=1/64^6
-            $status=1;
-
+           
             $payloadJwt_otp=array( //Introducir userID y trackerID como clave primaria33
                 "user_id" => $tokenDecoded->{'User_ID'},
                 "token" => $token,
@@ -85,6 +87,9 @@ class CodeOtp
             $stmt->bindParam(':_status', $status);
             $stmt->bindParam(':PK_id', $PK_id);
             $resul = $stmt->execute();
+
+            // Send to client
+            Notifications::sendOtp($email_cliente, $otp_pass);
 
             $responseObject=array(
                 "jwt_otp"=>$jwt_otp, 
