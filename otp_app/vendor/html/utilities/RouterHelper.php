@@ -7,10 +7,11 @@ require_once 'ExceptionService.php';
  const GENERATE_CODE_SERVICE = 'generatecode';
  const VALIDATE_CODE_SERVICE = 'validatecode';
  const STATUS_SERVICE = 'status';
+ const STATUS_CLIENT_SERVICE = 'statusclient';
  const PUSH_REGISTER_SERVICE = 'pushregister';
 
  // Array para meter todos los servicios
- const SERVICES = array(LOGIN_SERVICE, GENERATE_CODE_SERVICE, VALIDATE_CODE_SERVICE, STATUS_SERVICE, PUSH_REGISTER_SERVICE);
+ const SERVICES = array(LOGIN_SERVICE, GENERATE_CODE_SERVICE, VALIDATE_CODE_SERVICE, STATUS_SERVICE, PUSH_REGISTER_SERVICE, STATUS_CLIENT_SERVICE);
 
 class RouterHelper{
 

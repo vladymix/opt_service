@@ -82,6 +82,18 @@ switch($service){
                 throw new ExceptionService(HttpStatus::NotFound, utf8_encode($metodo));
         }
     break; 
+    case STATUS_CLIENT_SERVICE:
+        switch ($metodo) {
+            case 'post':
+                // TODO
+                $serviceResponse ->sendData(HttpStatus::OK, Status::verifyClient());
+            break;
+            default:
+                throw new ExceptionService(HttpStatus::NotFound, utf8_encode($metodo));
+        }
+    break; 
+
+    
     case PUSH_REGISTER_SERVICE:
         switch ($metodo) {
             case 'post':
