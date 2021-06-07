@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -16,8 +17,12 @@ import com.ssr.otp.Extentions.getColorStatus
 import com.ssr.otp.Extentions.getImageStatus
 import com.ssr.otp.Extentions.getStatusButton
 import com.ssr.otp.R
+import com.ssr.otp.api.ApiResponse
+import com.ssr.otp.api.OtpApi
+import com.ssr.otp.models.Delivery
+import java.lang.Exception
 
-class LocationActivity : BaseActivity() {
+class LocationActivity : BaseActivity(), ApiResponse<Delivery> {
 
     private val callback = OnMapReadyCallback { googleMap ->
         val upm = LatLng(40.38955, -3.627098)
@@ -28,6 +33,7 @@ class LocationActivity : BaseActivity() {
     lateinit var imageStatus: ImageView
     lateinit var trackid: TextView
     lateinit var btnCode: Button
+    var isBusy: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,23 +51,61 @@ class LocationActivity : BaseActivity() {
 
         btnCode.setOnClickListener {
 
-            if( appLogic.itemSelected?.status == "1"){
-                appLogic.itemSelected?.status = "2"
-            }else{
-                appLogic.itemSelected?.status = "1"
-            }
-            bindValues()
+            this.onGenerateCode()
         }
 
-        this.bindValues()
+        appLogic.itemSelected?.let {
+            apiResult(it)
+        }
     }
 
-    fun bindValues() {
-        appLogic.itemSelected?.let {
-            imageStatus.setImageResource(it.status.getImageStatus())
-            trackid.text = it.trackId
-            btnCode.setBackgroundColor(ContextCompat.getColor(this, it.status.getColorStatus()))
-            btnCode.text = it.status.getStatusButton()
+    private fun onGenerateCode() {
+        if (isBusy) {
+            return
         }
+        appLogic.itemSelected?.let {
+            isBusy = true
+            OtpApi.getInstance().generateCode(it, this)
+        }
+    }
+
+
+    fun bindValues() {
+        try {
+            appLogic.itemSelected?.let {
+                imageStatus.setImageResource(it.status.getImageStatus())
+                trackid.text = it.trackId
+                btnCode.setBackgroundColor(ContextCompat.getColor(this, it.status.getColorStatus()))
+                btnCode.text = it.status.getStatusButton()
+            }
+        }catch (ex:Exception){
+            ex.printStackTrace()
+        }
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        OtpApi.getInstance().removeLister()
+    }
+
+    override fun apiResult(data: Delivery) {
+        isBusy = false
+        bindValues()
+
+        OtpApi.getInstance().registerListener(data,object :ApiResponse<Delivery>{
+            override fun apiResult(data: Delivery) {
+                bindValues()
+            }
+
+            override fun apiError(error: String?) {
+
+            }
+        })
+    }
+
+    override fun apiError(error: String?) {
+        isBusy = false
+        Toast.makeText(this, error, Toast.LENGTH_LONG).show()
     }
 }

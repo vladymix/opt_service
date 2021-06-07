@@ -13,12 +13,15 @@ import com.ssr.otp.Extentions.getColorStatus
 import com.ssr.otp.Extentions.getImageStatus
 import com.ssr.otp.Extentions.getStatusName
 import com.ssr.otp.R
+import com.ssr.otp.api.ApiResponse
+import com.ssr.otp.api.OtpApi
 import com.ssr.otp.models.Delivery
 
 class DeliveryAdapter(var itemSelected: (Delivery) -> Any) :
     RecyclerView.Adapter<DeliveryAdapter.DeliveryHolder>() {
 
     private var source = ArrayList<Delivery>()
+    private var api = OtpApi.getInstance()
 
     inner class DeliveryHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -35,6 +38,17 @@ class DeliveryAdapter(var itemSelected: (Delivery) -> Any) :
             statusName.text = item.status.getStatusName()
             imageStatus.setImageResource(item.status.getImageStatus())
             statusColor.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(statusColor.context, item.status.getColorStatus())))
+
+            api.getStatusClient(item, object :ApiResponse<Delivery>{
+                override fun apiResult(data: Delivery) {
+                    imageStatus.setImageResource(item.status.getImageStatus())
+                    statusColor.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(statusColor.context, item.status.getColorStatus())))
+                }
+
+                override fun apiError(error: String?) {
+
+                }
+            })
         }
 
     }

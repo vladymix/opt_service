@@ -69,9 +69,11 @@
             android:textColor="?android:textColorPrimary" />
 
         <EditText
+            android:id="@+id/yourCode"
             android:layout_width="100dp"
             android:maxLines="1"
             android:lines="1"
+            android:textSize="20sp"
             android:layout_height="wrap_content"
             android:hint="8234567"
             android:textAlignment="center" />

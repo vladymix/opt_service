@@ -41,4 +41,11 @@ dependencies {
     implementation 'com.github.vladymix:arch_ast:release_4.8'
     implementation 'com.google.android.gms:play-services-maps:17.0.1'
 
+
+    // Retrofit & OkHttp
+    implementation 'com.squareup.retrofit2:retrofit:2.6.0'
+
+    // JSON Converter
+    implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
+
 }
