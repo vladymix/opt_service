@@ -23,7 +23,7 @@ class MyFirebaseMessaginService: FirebaseMessagingService() {
 
     override fun onNewToken(p0: String) {
         super.onNewToken(p0)
-        OtpApi.getInstance().pushRegister(p0, object : ApiResponse<String> {
+       /* OtpApi.getInstance().pushRegister(p0, object : ApiResponse<String> {
             override fun apiResult(data: String) {
 
             }
@@ -31,7 +31,7 @@ class MyFirebaseMessaginService: FirebaseMessagingService() {
             override fun apiError(error: String?) {
 
             }
-        })
+        })*/
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {

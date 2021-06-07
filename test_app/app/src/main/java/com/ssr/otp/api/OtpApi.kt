@@ -71,8 +71,10 @@ class OtpApi private constructor() {
     private val service: IOtpApi
 
     init {
+        val myServer = "https://apiservice.vladymix.es/otp/html/api/"
+        val localhost = "http://192.168.1.150/api/"
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://192.168.1.150/api/")
+            .baseUrl(myServer)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         service = retrofit.create(IOtpApi::class.java)
