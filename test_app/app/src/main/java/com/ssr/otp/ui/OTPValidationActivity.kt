@@ -8,6 +8,7 @@ import com.ssr.otp.Extentions.getImageStatus
 import com.ssr.otp.R
 import com.ssr.otp.api.ApiResponse
 import com.ssr.otp.api.OtpApi
+import com.ssr.otp.dialogs.SheetDialogValidate
 
 class OTPValidationActivity : BaseActivity(), ApiResponse<String> {
 
@@ -54,13 +55,11 @@ class OTPValidationActivity : BaseActivity(), ApiResponse<String> {
         appLogic.itemSelected?.status = data
         bindValues()
         if(data == "2"){
-            Toast.makeText(this, "Your order has been delivered correctly", Toast.LENGTH_LONG).show()
+            showMessage("Confirmed","Your order has been delivered correctly", R.color.purple_500)
         }
     }
 
     override fun apiError(error: String?) {
-
-
       val message =  error?.let {
             when (error){
                 "406"-> "The code entered is not correct.\n" +
@@ -70,7 +69,17 @@ class OTPValidationActivity : BaseActivity(), ApiResponse<String> {
                 else -> "Error $error"
             }
         }
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+        showMessage( appLogic.itemSelected?.trackId!!, message!!, R.color.color_wait)
+       // Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    }
+
+
+    fun showMessage(title:String, message:String, mColor:Int){
+        SheetDialogValidate().apply {
+            mMessage =message
+            mTitle = title
+            color = mColor
+        }.show(supportFragmentManager, "")
     }
 
 }
